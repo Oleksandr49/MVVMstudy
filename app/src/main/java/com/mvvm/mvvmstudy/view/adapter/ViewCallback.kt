@@ -1,5 +1,6 @@
 package com.mvvm.mvvmstudy.view.adapter
 
-interface ViewPositionRemovalCallback {
+interface ViewCallback {
     fun removePosition(positionID: Long)
+    fun positionDetails(positionID: Long)
 }

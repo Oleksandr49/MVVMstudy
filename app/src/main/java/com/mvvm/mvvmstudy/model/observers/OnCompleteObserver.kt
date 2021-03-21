@@ -1,12 +1,13 @@
 package com.mvvm.mvvmstudy.model.observers
 
+import android.util.Log
 import io.reactivex.CompletableObserver
 import io.reactivex.disposables.Disposable
 
-class OnCompleteObserver (val onCompleteCallback : OnCompleteActionCallback) : CompletableObserver {
+class OnCompleteObserver (private val onCompleteCallback : OnCompleteActionCallback) : CompletableObserver {
 
     override fun onSubscribe(d: Disposable) {
-
+        Log.i("onSubscribe", "OnCompleteObserver, onSubscribe()")
     }
 
     override fun onComplete() {
@@ -14,6 +15,6 @@ class OnCompleteObserver (val onCompleteCallback : OnCompleteActionCallback) : C
     }
 
     override fun onError(e: Throwable) {
-        println(e.message)
+        e.message?.let { Log.i("Error", it) }
     }
 }

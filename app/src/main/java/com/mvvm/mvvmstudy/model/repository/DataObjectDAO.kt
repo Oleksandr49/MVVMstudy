@@ -15,7 +15,7 @@ interface DataObjectDAO {
     fun findById(id: Long): Single<DataObject>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun createOrUpdate(dataObject: DataObject): Completable
+    fun createOrUpdate(dataObject: DataObject): Single<Long>
 
     @Query("DELETE FROM DataObjects WHERE id = :id")
     fun deleteById(id: Long): Completable

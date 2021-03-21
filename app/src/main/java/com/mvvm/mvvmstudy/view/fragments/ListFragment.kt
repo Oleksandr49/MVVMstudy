@@ -14,7 +14,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.mvvm.mvvmstudy.R
 import com.mvvm.mvvmstudy.model.domainModel.DataObject
 import com.mvvm.mvvmstudy.view.adapter.ListFragmentAdapter
-import com.mvvm.mvvmstudy.view.adapter.ViewPositionRemovalCallback
+import com.mvvm.mvvmstudy.view.adapter.ViewCallback
+import com.mvvm.mvvmstudy.view.dialogs.ConfirmationDialog
+import com.mvvm.mvvmstudy.view.dialogs.ConfirmationDialogCallback
 import com.mvvm.mvvmstudy.viewmodel.ListFragmentViewModel
 
 class ListFragment : BaseFragment(){
@@ -36,9 +38,17 @@ class ListFragment : BaseFragment(){
         super.onViewCreated(view, savedInstanceState)
         val recyclerView : RecyclerView = view.findViewById(R.id.recyclerView)
         adapter = ListFragmentAdapter()
-        adapter.viewCallback = object : ViewPositionRemovalCallback {
+        adapter.viewCallback = object : ViewCallback {
             override fun removePosition(positionID: Long) {
-                viewModel.removePosition(positionID)
+                showDialog(ConfirmationDialog(object : ConfirmationDialogCallback{
+                    override fun onConfirm() {
+                        viewModel.removePosition(positionID)
+                    }
+                }))
+            }
+
+            override fun positionDetails(positionID: Long) {
+                showFragment(DetailsFragment(positionID))
             }
         }
         recyclerView.adapter = adapter
@@ -60,21 +70,11 @@ class ListFragment : BaseFragment(){
         })
 
         val addPosition: FloatingActionButton = view.findViewById(R.id.fab)
-        addPosition.setOnClickListener {
-            val transaction =
-                activity?.supportFragmentManager?.beginTransaction()
-            transaction?.replace(R.id.fragmentPlaceHolder, CreationFragment())
-            transaction?.addToBackStack("ObjectCreation")
-            transaction?.commit()
-        }
+        addPosition.setOnClickListener { showFragment(CreationFragment()) }
     }
 
     override fun onResume() {
         viewModel.updateList()
         super.onResume()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
     }
 }

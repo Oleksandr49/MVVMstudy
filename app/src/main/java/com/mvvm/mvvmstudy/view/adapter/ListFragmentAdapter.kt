@@ -12,7 +12,7 @@ import com.mvvm.mvvmstudy.model.DataObjectDiffUtilCallbackImpl
 class ListFragmentAdapter : RecyclerView.Adapter<ViewHolder>() {
 
     private var itemsList : List<DataObject> = ArrayList()
-    lateinit var viewCallback : ViewPositionRemovalCallback
+    lateinit var viewCallback : ViewCallback
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -23,6 +23,9 @@ class ListFragmentAdapter : RecyclerView.Adapter<ViewHolder>() {
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.objectName.text = itemsList[position].name
+        holder.objectName.setOnClickListener {
+            viewCallback.positionDetails(itemsList[holder.adapterPosition].id!!)
+        }
         holder.removeButton.setOnClickListener {
             viewCallback.removePosition(itemsList[holder.adapterPosition].id!!)
         }
@@ -34,12 +37,10 @@ class ListFragmentAdapter : RecyclerView.Adapter<ViewHolder>() {
 
     fun updateList(updatedList: List<DataObject>){
         val result = DiffUtil.calculateDiff(DataObjectDiffUtilCallbackImpl(itemsList, updatedList))
-        setItemList(updatedList)
+        itemsList = updatedList
         result.dispatchUpdatesTo(this)
     }
 
-    private fun setItemList(updatedList: List<DataObject>){
-        itemsList = updatedList
-    }
+
 
 }

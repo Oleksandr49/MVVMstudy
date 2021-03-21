@@ -33,8 +33,4 @@ class CreationFragment : BaseFragment() {
         }
         super.onViewCreated(view, savedInstanceState)
     }
-
-    override fun onDestroy() {
-        super.onDestroy()
-    }
 }

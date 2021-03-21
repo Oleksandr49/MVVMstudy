@@ -6,7 +6,7 @@ import io.reactivex.Single
 interface BaseRepository <T> {
 
     fun getAll(): Single<List<T>>
-    fun createOrUpdate(someObject:T) : Completable
+    fun createOrUpdate(someObject:T) : Single<Long>
     fun findById(id:Long) : Single<T>
     fun deleteById(id:Long) : Completable
 
