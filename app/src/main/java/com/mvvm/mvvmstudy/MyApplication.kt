@@ -2,7 +2,6 @@ package com.mvvm.mvvmstudy
 
 import android.app.Application
 import android.content.Context
-import java.lang.Exception
 
 class MyApplication : Application() {
 

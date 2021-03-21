@@ -5,17 +5,12 @@ import com.mvvm.mvvmstudy.model.domainModel.DataObject
 
 class DataObjectDiffUtilCallbackImpl(private val oldList: List<DataObject>, private val newList: List<DataObject>) : DiffUtil.Callback() {
 
-    override fun getOldListSize(): Int {
-        return oldList.size
-    }
+    override fun getOldListSize(): Int = oldList.size
 
-    override fun getNewListSize(): Int {
-        return newList.size
-    }
+    override fun getNewListSize(): Int = newList.size
 
-    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        return isSameId(oldList[oldItemPosition], newList[newItemPosition])
-    }
+    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) = isSameId(oldList[oldItemPosition], newList[newItemPosition])
+
 
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
         val newObject : DataObject = newList[newItemPosition]
@@ -23,15 +18,10 @@ class DataObjectDiffUtilCallbackImpl(private val oldList: List<DataObject>, priv
         return (isSameId(oldObject, newObject) && isSameName(oldObject, newObject) && isSameDetails(oldObject, newObject))
     }
 
-    private fun isSameId(oldObject: DataObject, newObject: DataObject) : Boolean{
-        return oldObject.id == newObject.id
-    }
+    private fun isSameId(oldObject: DataObject, newObject: DataObject) = (oldObject.id == newObject.id)
 
-    private fun isSameName(oldObject: DataObject, newObject: DataObject) : Boolean{
-        return oldObject.name == newObject.name
-    }
+    private fun isSameName(oldObject: DataObject, newObject: DataObject) = (oldObject.name == newObject.name)
 
-    private fun isSameDetails(oldObject: DataObject, newObject: DataObject) : Boolean{
-        return oldObject.details == newObject.details
-    }
+    private fun isSameDetails(oldObject: DataObject, newObject: DataObject) = (oldObject.details == newObject.details)
+
 }

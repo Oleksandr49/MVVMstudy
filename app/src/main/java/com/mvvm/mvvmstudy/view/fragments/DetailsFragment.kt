@@ -6,12 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.mvvm.mvvmstudy.R
 import com.mvvm.mvvmstudy.model.domainModel.DataObject
-import com.mvvm.mvvmstudy.viewmodel.CreationFragmentViewModel
 import com.mvvm.mvvmstudy.viewmodel.DetailsFragmentViewModel
 
 class DetailsFragment(private val associatedPositionId : Long): BaseFragment() {

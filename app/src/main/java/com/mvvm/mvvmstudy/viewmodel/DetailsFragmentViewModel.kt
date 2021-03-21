@@ -19,7 +19,7 @@ class DetailsFragmentViewModel : ViewModel() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(OnSuccessSingleObserver(object : OnSuccessActionCallback<DataObject>{
                 override fun onSuccessDo(`object`: DataObject) {
-                    currentObject.value = `object`
+                    currentObject.postValue(`object`)
                 }
             }))
     }

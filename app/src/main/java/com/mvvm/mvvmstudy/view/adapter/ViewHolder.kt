@@ -3,7 +3,6 @@ package com.mvvm.mvvmstudy.view.adapter
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.mvvm.mvvmstudy.R
 

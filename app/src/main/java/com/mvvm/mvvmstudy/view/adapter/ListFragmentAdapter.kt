@@ -6,8 +6,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.mvvm.mvvmstudy.R
-import com.mvvm.mvvmstudy.model.domainModel.DataObject
 import com.mvvm.mvvmstudy.model.DataObjectDiffUtilCallbackImpl
+import com.mvvm.mvvmstudy.model.domainModel.DataObject
 
 class ListFragmentAdapter : RecyclerView.Adapter<ViewHolder>() {
 
@@ -24,10 +24,10 @@ class ListFragmentAdapter : RecyclerView.Adapter<ViewHolder>() {
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.objectName.text = itemsList[position].name
         holder.objectName.setOnClickListener {
-            viewCallback.positionDetails(itemsList[holder.adapterPosition].id!!)
+            itemsList[holder.adapterPosition].id?.let { it1 -> viewCallback.positionDetails(it1) }
         }
         holder.removeButton.setOnClickListener {
-            viewCallback.removePosition(itemsList[holder.adapterPosition].id!!)
+            itemsList[holder.adapterPosition].id?.let { it1 -> viewCallback.removePosition(it1) }
         }
     }
 

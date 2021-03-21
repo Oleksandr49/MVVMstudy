@@ -6,29 +6,15 @@ import io.reactivex.Single
 
 class DataObjectRepository : BaseRepository <DataObject>{
 
-    private val database : DataObjectDatabase? = DataObjectDatabase.getInstance()
+    private val database : DataObjectDatabase = DataObjectDatabase.getInstance()
 
-    override fun getAll(): Single<List<DataObject>>{
-        val dataList: Single<List<DataObject>>? = database?.let {this.database.dataObjectDAO().getAll()}
-        if(dataList!=null) return  dataList
-        else throw Exception("No data found")
-    }
+    override fun getAll(): Single<List<DataObject>> = database.dataObjectDAO().getAll()
 
-    override fun createOrUpdate(someObject: DataObject) : Single<Long> {
-        val result: Single<Long>? = database?.let {this.database.dataObjectDAO().createOrUpdate(someObject)}
-        if(result!=null) return  result
-        else throw Exception("Creation/Update was not completed")
-    }
+    override fun create(someObject: DataObject) : Single<Long> = database.dataObjectDAO().create(someObject)
 
-    override fun findById(id: Long): Single<DataObject> {
-        val dataObject: Single<DataObject>? = database?.let {this.database.dataObjectDAO().findById(id)}
-        if(dataObject!=null) return  dataObject
-        else throw Exception("No data found")
-    }
+    override fun findById(id: Long): Single<DataObject> = database.dataObjectDAO().findById(id)
 
-    override fun deleteById(id: Long) : Completable{
-        val result: Completable? = database?.let {this.database.dataObjectDAO().deleteById(id)}
-        if(result!=null) return  result
-        else throw Exception("No data was deleted")
-    }
+    override fun deleteById(id: Long) : Completable = database.dataObjectDAO().deleteById(id)
+
+    override fun update(dataObject: DataObject) : Completable = database.dataObjectDAO().update(dataObject)
 }

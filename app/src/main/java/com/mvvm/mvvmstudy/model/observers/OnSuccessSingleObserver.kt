@@ -1,7 +1,6 @@
 package com.mvvm.mvvmstudy.model.observers
 
 import android.util.Log
-import com.mvvm.mvvmstudy.model.domainModel.DataObject
 import io.reactivex.SingleObserver
 import io.reactivex.disposables.Disposable
 

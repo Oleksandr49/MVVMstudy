@@ -1,6 +1,5 @@
 package com.mvvm.mvvmstudy.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.mvvm.mvvmstudy.model.domainModel.DataObject
@@ -20,7 +19,7 @@ class EditionFragmentViewModel : ViewModel() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(OnSuccessSingleObserver(object : OnSuccessActionCallback<DataObject> {
                 override fun onSuccessDo(`object`: DataObject) {
-                    currentObject.value = `object`
+                    currentObject.postValue(`object`)
                 }
             }))
     }
@@ -30,26 +29,16 @@ class EditionFragmentViewModel : ViewModel() {
         editedObject?.name = editedName
         editedObject?.details = editedDetails
         if (editedObject != null) {
-            repository.createOrUpdate(editedObject)
-                .subscribeOn(Schedulers.io())
-                .subscribe(OnSuccessSingleObserver(object : OnSuccessActionCallback<Long>{
-                    override fun onSuccessDo(`object`: Long) {
-                        Log.i("Updated", "Object updated, ID: " + `object`)
-                    }
-                }))
+            repository.update(editedObject)
+                    .subscribeOn(Schedulers.io())
+                    .subscribe()
         }
     }
 
-    fun isValid(editedName: String, editedDetails: String) : Boolean{
-        return (notSame(editedName, editedDetails) && notEmpty(editedName, editedDetails))
-    }
+    fun isValid(editedName: String, editedDetails: String) = (notSame(editedName, editedDetails) && notEmpty(editedName, editedDetails))
 
-    private fun notSame(editedName: String, editedDetails: String) : Boolean{
-        val current : DataObject? = currentObject.value
-        return (editedName != current?.name && editedDetails != current?.details)
-    }
+    private fun notSame(editedName: String, editedDetails: String) = (editedName != currentObject.value?.name || editedDetails !=currentObject.value?.details)
 
-    private fun notEmpty(editedName: String, editedDetails: String) : Boolean{
-        return (editedName.isNotEmpty() && editedDetails.isNotEmpty())
-    }
+    private fun notEmpty(editedName: String, editedDetails: String) = (editedName.isNotEmpty() && editedDetails.isNotEmpty())
+
 }

@@ -17,16 +17,12 @@ abstract class DataObjectDatabase : RoomDatabase() {
         private var instance: DataObjectDatabase? = null
 
         @Synchronized
-        fun getInstance(): DataObjectDatabase? {
-            if (instance == null) {
-                instance = Room.databaseBuilder(
-                    MyApplication.getAppContext(),
-                    DataObjectDatabase::class.java, DB_Name
-                )
+        fun getInstance(): DataObjectDatabase {
+            return instance ?: Room.databaseBuilder(MyApplication.getAppContext(),
+                    DataObjectDatabase::class.java, DB_Name)
                     .fallbackToDestructiveMigration()
                     .build()
-            }
-            return instance
+
         }
     }
 }

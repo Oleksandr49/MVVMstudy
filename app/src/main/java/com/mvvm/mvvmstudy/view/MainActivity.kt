@@ -1,7 +1,7 @@
 package com.mvvm.mvvmstudy.view
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentTransaction
 import com.mvvm.mvvmstudy.R
 import com.mvvm.mvvmstudy.view.fragments.ListFragment
