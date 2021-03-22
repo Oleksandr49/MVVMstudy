@@ -48,7 +48,7 @@ class ListFragment : BaseFragment(){
             }
 
             override fun positionDetails(positionID: Long) {
-                showFragment(DetailsFragment(positionID))
+                showFragment(DetailsFragment.getInstance(positionID))
             }
         }
         recyclerView.adapter = adapter

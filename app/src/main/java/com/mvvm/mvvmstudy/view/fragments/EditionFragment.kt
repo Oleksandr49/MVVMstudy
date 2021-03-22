@@ -15,11 +15,20 @@ import com.mvvm.mvvmstudy.view.dialogs.ConfirmationDialogCallback
 import com.mvvm.mvvmstudy.view.dialogs.InputNotValidDialog
 import com.mvvm.mvvmstudy.viewmodel.EditionFragmentViewModel
 
-class EditionFragment(private val associatedObjectId : Long) : BaseFragment() {
+class EditionFragment : BaseFragment() {
 
     lateinit var viewModel : EditionFragmentViewModel
     lateinit var name : EditText
     lateinit var details : EditText
+    var associatedObjectId : Long = 0
+
+    companion object{
+        fun getInstance(value:Long) : EditionFragment{
+            val fragment = EditionFragment()
+            fragment.associatedObjectId = value
+            return fragment
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         viewModel = ViewModelProvider(this).get(EditionFragmentViewModel::class.java)

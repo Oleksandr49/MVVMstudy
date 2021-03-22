@@ -11,9 +11,9 @@ open class BaseFragment : Fragment() {
         activity?.supportFragmentManager?.popBackStack()
     }
 
-    fun showFragment(fragment: Fragment?) {
+    fun showFragment(fragment: Fragment) {
         val transaction : FragmentTransaction? = activity?.supportFragmentManager?.beginTransaction()
-        transaction?.replace(R.id.fragmentPlaceHolder, fragment!!)
+        transaction?.replace(R.id.fragmentPlaceHolder, fragment)
         transaction?.addToBackStack(null)
         transaction?.commit()
     }
