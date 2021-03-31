@@ -1,24 +1,22 @@
 package com.mvvm.mvvmstudy.view.fragments
 
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.mvvm.mvvmstudy.R
 import com.mvvm.mvvmstudy.model.domainModel.DataObject
 import com.mvvm.mvvmstudy.viewmodel.DetailsFragmentViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class DetailsFragment : BaseFragment() {
 
-    lateinit var viewModel : DetailsFragmentViewModel
-    lateinit var name : TextView
-    lateinit var details : TextView
+    val viewModel : DetailsFragmentViewModel by viewModel()
+    var name : TextView? = null
+    var details : TextView? = null
     var associatedPositionId : Long = 0
 
     companion object{
@@ -30,13 +28,14 @@ class DetailsFragment : BaseFragment() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        viewModel = ViewModelProvider(this).get(DetailsFragmentViewModel::class.java)
-        viewModel.currentObject.observe(this, Observer<DataObject>{
-            data -> name.text = data.name
-                    details.text = data.details
-        })
+            viewModel.currentObject.observe(this, Observer<DataObject>{
+                data -> name?.text = data.name
+                details?.text = data.details
+            })
+
         if(savedInstanceState != null){
-            associatedPositionId = savedInstanceState.getLong("positionID")
+            associatedPositionId = savedInstanceState.getLong("ID")
+            viewModel.getObject(associatedPositionId)
         }
         super.onCreate(savedInstanceState)
     }
@@ -60,9 +59,8 @@ class DetailsFragment : BaseFragment() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        println("SAVED")
-        activity?.supportFragmentManager?.putFragment(outState, "LastFragment", this)
         super.onSaveInstanceState(outState)
+        outState.putLong("ID", associatedPositionId)
     }
 
     override fun onResume() {

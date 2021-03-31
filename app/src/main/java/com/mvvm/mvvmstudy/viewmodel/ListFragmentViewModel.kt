@@ -7,15 +7,13 @@ import com.mvvm.mvvmstudy.model.observers.OnCompleteActionCallback
 import com.mvvm.mvvmstudy.model.observers.OnCompleteObserver
 import com.mvvm.mvvmstudy.model.observers.OnSuccessActionCallback
 import com.mvvm.mvvmstudy.model.observers.OnSuccessSingleListObserver
-import com.mvvm.mvvmstudy.model.repository.BaseRepository
 import com.mvvm.mvvmstudy.model.repository.DataObjectRepository
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
-class ListFragmentViewModel : ViewModel() {
+class ListFragmentViewModel (private val repository : DataObjectRepository) : ViewModel() {
 
     var currentObjectList : MutableLiveData<List<DataObject>> = MutableLiveData()
-    private val repository : BaseRepository<DataObject> = DataObjectRepository()
 
     fun updateList(){
         repository.getAll().subscribeOn(Schedulers.io())

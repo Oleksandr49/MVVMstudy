@@ -5,19 +5,15 @@ import com.mvvm.mvvmstudy.model.domainModel.DataObject
 import com.mvvm.mvvmstudy.model.repository.DataObjectRepository
 import io.reactivex.schedulers.Schedulers
 
-class CreationFragmentViewModel : ViewModel() {
+class CreationFragmentViewModel(private val repository : DataObjectRepository) : ViewModel() {
 
-    private val repository : DataObjectRepository = DataObjectRepository()
-
-    fun addPosition(name:String, details:String){
-        if(isValid(name, details)) {
+     fun addPosition(name:String, details:String){
             val newPosition = DataObject(null, name, details)
             repository.create(newPosition)
                 .subscribeOn(Schedulers.io())
                 .subscribe()
-        }
     }
 
-    private fun isValid(name:String, details: String) = (name.isNotEmpty() && details.isNotEmpty())
+    fun isValid(name:String, details: String) = (name.isNotEmpty() && details.isNotEmpty())
 
 }

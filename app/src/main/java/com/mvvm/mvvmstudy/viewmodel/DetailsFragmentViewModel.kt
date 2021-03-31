@@ -9,9 +9,8 @@ import com.mvvm.mvvmstudy.model.repository.DataObjectRepository
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
-class DetailsFragmentViewModel : ViewModel() {
+class DetailsFragmentViewModel(private val repository : DataObjectRepository) : ViewModel() {
 
-    private val repository : DataObjectRepository = DataObjectRepository()
     var currentObject : MutableLiveData<DataObject> = MutableLiveData()
 
     fun getObject(objectId : Long) {

@@ -7,19 +7,19 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.mvvm.mvvmstudy.R
 import com.mvvm.mvvmstudy.model.domainModel.DataObject
 import com.mvvm.mvvmstudy.view.dialogs.ConfirmationDialog
 import com.mvvm.mvvmstudy.view.dialogs.ConfirmationDialogCallback
 import com.mvvm.mvvmstudy.view.dialogs.InputNotValidDialog
 import com.mvvm.mvvmstudy.viewmodel.EditionFragmentViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class EditionFragment : BaseFragment() {
 
-    lateinit var viewModel : EditionFragmentViewModel
-    lateinit var name : EditText
-    lateinit var details : EditText
+    val viewModel : EditionFragmentViewModel by viewModel()
+    var nameDisplay : EditText? = null
+    var detailsDisplay : EditText? = null
     var associatedObjectId : Long = 0
 
     companion object{
@@ -31,11 +31,11 @@ class EditionFragment : BaseFragment() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        viewModel = ViewModelProvider(this).get(EditionFragmentViewModel::class.java)
         viewModel.currentObject.observe(this, Observer<DataObject>{
-                data -> name.setText(data.name)
-                        details.setText(data.details)
+                data -> nameDisplay?.setText(data.name)
+                        detailsDisplay?.setText(data.details)
         })
+        viewModel.getObject(associatedObjectId)
         super.onCreate(savedInstanceState)
     }
 
@@ -44,8 +44,8 @@ class EditionFragment : BaseFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        name = view.findViewById(R.id.objectNameEdit)
-        details = view.findViewById(R.id.objectDetailsEdit)
+        nameDisplay = view.findViewById(R.id.objectNameEdit)
+        detailsDisplay = view.findViewById(R.id.objectDetailsEdit)
 
         val cancelButton : Button = view.findViewById(R.id.Cancel)
         cancelButton.setOnClickListener{
@@ -54,8 +54,8 @@ class EditionFragment : BaseFragment() {
 
         val confirmationButton : Button = view.findViewById(R.id.Confirm)
         confirmationButton.setOnClickListener{
-            val editedName:String = name.text.toString()
-            val editedDetails:String = details.text.toString()
+            val editedName:String = nameDisplay?.text.toString()
+            val editedDetails:String = detailsDisplay?.text.toString()
 
             if(viewModel.isValid(editedName, editedDetails)) {
                 showDialog(ConfirmationDialog(object : ConfirmationDialogCallback {
@@ -73,8 +73,8 @@ class EditionFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
     }
 
-    override fun onResume() {
-        viewModel.getObject(associatedObjectId)
-        super.onResume()
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        viewModel.saveCurrentObjectState(nameDisplay?.text.toString(), detailsDisplay?.text.toString())
     }
 }

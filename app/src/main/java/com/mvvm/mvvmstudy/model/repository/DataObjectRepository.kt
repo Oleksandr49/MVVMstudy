@@ -4,17 +4,15 @@ import com.mvvm.mvvmstudy.model.domainModel.DataObject
 import io.reactivex.Completable
 import io.reactivex.Single
 
-class DataObjectRepository : BaseRepository <DataObject>{
+class DataObjectRepository(private val dataObjectDAO: DataObjectDAO): BaseRepository <DataObject> {
 
-    private val database : DataObjectDatabase = DataObjectDatabase.getInstance()
+    override fun getAll(): Single<List<DataObject>> = dataObjectDAO.getAll()
 
-    override fun getAll(): Single<List<DataObject>> = database.dataObjectDAO().getAll()
+    override fun create(someObject: DataObject) : Single<Long> = dataObjectDAO.create(someObject)
 
-    override fun create(someObject: DataObject) : Single<Long> = database.dataObjectDAO().create(someObject)
+    override fun findById(id: Long): Single<DataObject> = dataObjectDAO.findById(id)
 
-    override fun findById(id: Long): Single<DataObject> = database.dataObjectDAO().findById(id)
+    override fun deleteById(id: Long) : Completable = dataObjectDAO.deleteById(id)
 
-    override fun deleteById(id: Long) : Completable = database.dataObjectDAO().deleteById(id)
-
-    override fun update(dataObject: DataObject) : Completable = database.dataObjectDAO().update(dataObject)
+    override fun update(dataObject: DataObject) : Completable = dataObjectDAO.update(dataObject)
 }

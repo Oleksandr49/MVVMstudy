@@ -9,10 +9,14 @@ import com.mvvm.mvvmstudy.model.repository.DataObjectRepository
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
-class EditionFragmentViewModel : ViewModel() {
+class EditionFragmentViewModel (private val repository : DataObjectRepository) : ViewModel() {
 
-    private val repository : DataObjectRepository = DataObjectRepository()
     var currentObject : MutableLiveData<DataObject> = MutableLiveData()
+
+    fun saveCurrentObjectState(editedName: String, editedDetails: String){
+        currentObject.value?.name = editedName
+        currentObject.value?.details = editedDetails
+    }
 
     fun getObject(objectId : Long) {
         repository.findById(objectId).subscribeOn(Schedulers.io())
@@ -35,10 +39,7 @@ class EditionFragmentViewModel : ViewModel() {
         }
     }
 
-    fun isValid(editedName: String, editedDetails: String) = (notSame(editedName, editedDetails) && notEmpty(editedName, editedDetails))
-
-    private fun notSame(editedName: String, editedDetails: String) = (editedName != currentObject.value?.name || editedDetails !=currentObject.value?.details)
-
-    private fun notEmpty(editedName: String, editedDetails: String) = (editedName.isNotEmpty() && editedDetails.isNotEmpty())
+    fun isValid(editedName: String, editedDetails: String) = editedName.isNotEmpty() && editedDetails.isNotEmpty()
 
 }
+

@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
@@ -18,19 +17,20 @@ import com.mvvm.mvvmstudy.view.adapter.ViewCallback
 import com.mvvm.mvvmstudy.view.dialogs.ConfirmationDialog
 import com.mvvm.mvvmstudy.view.dialogs.ConfirmationDialogCallback
 import com.mvvm.mvvmstudy.viewmodel.ListFragmentViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ListFragment : BaseFragment(){
 
-    lateinit var viewModel : ListFragmentViewModel
-    lateinit var adapter: ListFragmentAdapter
+    val viewModel : ListFragmentViewModel by viewModel()
+    var adapter: ListFragmentAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        viewModel = ViewModelProvider(this).get(ListFragmentViewModel::class.java)
+        viewModel.updateList()
         super.onCreate(savedInstanceState)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        viewModel.currentObjectList.observe(this, Observer<List<DataObject>>{ list -> adapter.updateList(list)}  )
+        viewModel.currentObjectList.observe(viewLifecycleOwner, Observer<List<DataObject>>{ list -> adapter?.updateList(list)}  )
         return inflater.inflate(R.layout.list_fragment, container, false)
     }
 
@@ -38,7 +38,7 @@ class ListFragment : BaseFragment(){
         super.onViewCreated(view, savedInstanceState)
         val recyclerView : RecyclerView = view.findViewById(R.id.recyclerView)
         adapter = ListFragmentAdapter()
-        adapter.viewCallback = object : ViewCallback {
+        adapter?.viewCallback = object : ViewCallback {
             override fun removePosition(positionID: Long) {
                 showDialog(ConfirmationDialog(object : ConfirmationDialogCallback{
                     override fun onConfirm() {
@@ -46,7 +46,6 @@ class ListFragment : BaseFragment(){
                     }
                 }))
             }
-
             override fun positionDetails(positionID: Long) {
                 showFragment(DetailsFragment.getInstance(positionID))
             }
