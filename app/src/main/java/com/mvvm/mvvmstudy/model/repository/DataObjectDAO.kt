@@ -1,6 +1,9 @@
 package com.mvvm.mvvmstudy.model.repository
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.Query
+import androidx.room.Update
 import com.mvvm.mvvmstudy.model.domainModel.DataObject
 import io.reactivex.Completable
 import io.reactivex.Single
@@ -17,7 +20,7 @@ interface DataObjectDAO {
     @Insert
     fun create(dataObject: DataObject): Single<Long>
 
-    @Update(onConflict = OnConflictStrategy.REPLACE)
+    @Update
     fun update(dataObject: DataObject) : Completable
 
     @Query("DELETE FROM DataObjects WHERE id = :id")

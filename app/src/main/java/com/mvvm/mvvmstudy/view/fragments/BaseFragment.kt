@@ -19,6 +19,6 @@ open class BaseFragment : Fragment() {
     }
 
     fun showDialog(dialog: DialogFragment) {
-        if (fragmentManager != null) dialog.show(fragmentManager!!, "anyTag")
+        if (fragmentManager != null) dialog.show(requireFragmentManager(), "anyTag")
     }
 }

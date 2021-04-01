@@ -5,8 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.EditText
-import com.mvvm.mvvmstudy.R
+import com.mvvm.mvvmstudy.databinding.CreationFragmentBinding
 import com.mvvm.mvvmstudy.view.dialogs.ConfirmationDialog
 import com.mvvm.mvvmstudy.view.dialogs.ConfirmationDialogCallback
 import com.mvvm.mvvmstudy.view.dialogs.InputNotValidDialog
@@ -16,29 +15,21 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class CreationFragment : BaseFragment() {
 
     val viewModel : CreationFragmentViewModel by viewModel()
-    var objectNameInput : EditText? = null
-    var objectDetailsInput : EditText? = null
+    private var binding : CreationFragmentBinding? = null
 
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        savedInstanceState?.getBundle("CurrentState").let {
-            objectNameInput?.setText(it?.getCharSequence("Name"))
-            objectDetailsInput?.setText(it?.getCharSequence("Details"))
-        }
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.creation_fragment, container, false)
-    }
+        savedInstanceState?.getBundle("CurrentState")?.let {
+            binding?.objectNameInput?.setText(it.getCharSequence("Name"))
+            binding?.objectDetailsInput?.setText(it.getCharSequence("Details"))
+        }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        objectNameInput = view.findViewById(R.id.objectNameInput)
-        objectDetailsInput = view.findViewById(R.id.objectDetailsInput)
-        val addButton : Button = view.findViewById(R.id.ADD)
-        addButton.setOnClickListener{
-            val name = objectNameInput?.text.toString()
-            val details = objectNameInput?.text.toString()
+        binding = CreationFragmentBinding.inflate(inflater, container, false)
+
+        val addButton : Button? = binding?.ADD
+        addButton?.setOnClickListener{
+            val name = binding?.objectNameInput?.text.toString()
+            val details = binding?.objectDetailsInput?.text.toString()
             if(viewModel.isValid(name, details)){
                 showDialog(ConfirmationDialog(object : ConfirmationDialogCallback {
                     override fun onConfirm() {
@@ -51,14 +42,21 @@ class CreationFragment : BaseFragment() {
                 showDialog(InputNotValidDialog())
             }
         }
-        super.onViewCreated(view, savedInstanceState)
+
+        return binding?.root
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         val currentState = Bundle()
-        currentState.putCharSequence("Name", objectNameInput?.text.toString())
-        currentState.putCharSequence("Details", objectDetailsInput?.text.toString())
+        currentState.putCharSequence("Name", binding?.objectNameInput?.text.toString())
+        currentState.putCharSequence("Details", binding?.objectDetailsInput?.text.toString())
         outState.putBundle("CurrentState", currentState)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null
+        viewModel.disposeUseCase()
     }
 }

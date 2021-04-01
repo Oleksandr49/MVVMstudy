@@ -24,10 +24,10 @@ class ListFragmentAdapter : RecyclerView.Adapter<ViewHolder>() {
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.objectName.text = itemsList[position].name
         holder.objectName.setOnClickListener {
-            itemsList[holder.adapterPosition].id?.let { it1 -> viewCallback.positionDetails(it1) }
+            itemsList[holder.adapterPosition].id?.let { id -> viewCallback.positionDetails(id) }
         }
         holder.removeButton.setOnClickListener {
-            itemsList[holder.adapterPosition].id?.let { it1 -> viewCallback.removePosition(it1) }
+            itemsList[holder.adapterPosition].id?.let { id -> viewCallback.removePosition(id) }
         }
     }
 

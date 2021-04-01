@@ -3,13 +3,13 @@ package com.mvvm.mvvmstudy.viewmodel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.mvvm.mvvmstudy.model.domainModel.DataObject
+import com.mvvm.mvvmstudy.model.observers.EmptyDisposableCompletableObserver
 import com.mvvm.mvvmstudy.model.observers.OnSuccessActionCallback
-import com.mvvm.mvvmstudy.model.observers.OnSuccessSingleObserver
-import com.mvvm.mvvmstudy.model.repository.DataObjectRepository
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import com.mvvm.mvvmstudy.model.observers.OnSuccessDisposableSingleObserver
+import com.mvvm.mvvmstudy.useCases.completabeUseCases.DataObjectUpdateUseCase
+import com.mvvm.mvvmstudy.useCases.singleUseCases.DataObjectDetailsUseCase
 
-class EditionFragmentViewModel (private val repository : DataObjectRepository) : ViewModel() {
+class EditionFragmentViewModel (private val detailsUseCase : DataObjectDetailsUseCase, private val updateUseCase : DataObjectUpdateUseCase) : ViewModel() {
 
     var currentObject : MutableLiveData<DataObject> = MutableLiveData()
 
@@ -19,13 +19,11 @@ class EditionFragmentViewModel (private val repository : DataObjectRepository) :
     }
 
     fun getObject(objectId : Long) {
-        repository.findById(objectId).subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(OnSuccessSingleObserver(object : OnSuccessActionCallback<DataObject> {
-                override fun onSuccessDo(`object`: DataObject) {
-                    currentObject.postValue(`object`)
-                }
-            }))
+        detailsUseCase.execute(OnSuccessDisposableSingleObserver(object : OnSuccessActionCallback<DataObject>{
+            override fun onSuccessDo(`object`: DataObject) {
+                currentObject.postValue(`object`)
+            }
+        }), objectId)
     }
 
     fun confirmChanges(editedName: String, editedDetails: String){
@@ -33,13 +31,16 @@ class EditionFragmentViewModel (private val repository : DataObjectRepository) :
         editedObject?.name = editedName
         editedObject?.details = editedDetails
         if (editedObject != null) {
-            repository.update(editedObject)
-                    .subscribeOn(Schedulers.io())
-                    .subscribe()
+            updateUseCase.execute(EmptyDisposableCompletableObserver(), editedObject)
         }
     }
 
     fun isValid(editedName: String, editedDetails: String) = editedName.isNotEmpty() && editedDetails.isNotEmpty()
+
+    fun disposeUseCase(){
+        detailsUseCase.dispose()
+        updateUseCase.dispose()
+    }
 
 }
 

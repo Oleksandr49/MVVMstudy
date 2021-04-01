@@ -5,19 +5,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.TextView
 import androidx.lifecycle.Observer
-import com.mvvm.mvvmstudy.R
+import com.mvvm.mvvmstudy.databinding.DetailsFragmentBinding
 import com.mvvm.mvvmstudy.model.domainModel.DataObject
 import com.mvvm.mvvmstudy.viewmodel.DetailsFragmentViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class DetailsFragment : BaseFragment() {
 
-    val viewModel : DetailsFragmentViewModel by viewModel()
-    var name : TextView? = null
-    var details : TextView? = null
+    private val viewModel : DetailsFragmentViewModel by viewModel()
     var associatedPositionId : Long = 0
+    private var binding : DetailsFragmentBinding? = null
 
     companion object{
         fun getInstance(value:Long) : DetailsFragment{
@@ -27,35 +25,28 @@ class DetailsFragment : BaseFragment() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-            viewModel.currentObject.observe(this, Observer<DataObject>{
-                data -> name?.text = data.name
-                details?.text = data.details
-            })
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        viewModel.currentObject.observe(viewLifecycleOwner, Observer<DataObject>{
+                data -> binding?.name?.text = data.name
+            binding?.details?.text = data.details
+        })
 
         if(savedInstanceState != null){
             associatedPositionId = savedInstanceState.getLong("ID")
-            viewModel.getObject(associatedPositionId)
         }
-        super.onCreate(savedInstanceState)
-    }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
-        inflater.inflate(R.layout.details_fragment, container, false)
+        viewModel.getObject(associatedPositionId)
+        binding = DetailsFragmentBinding.inflate(inflater, container, false)
 
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        name = view.findViewById(R.id.name)
-        details = view.findViewById(R.id.details)
-        val closeButton : Button = view.findViewById(R.id.closeButton)
-        closeButton.setOnClickListener{
+        val closeButton : Button? = binding?.closeButton
+        closeButton?.setOnClickListener{
             dismissFragment()
         }
-        val editButton : Button = view.findViewById(R.id.editButton)
-        editButton.setOnClickListener{
+        val editButton : Button? = binding?.editButton
+        editButton?.setOnClickListener{
             showFragment(EditionFragment.getInstance(associatedPositionId))
         }
-        super.onViewCreated(view, savedInstanceState)
+        return binding?.root
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -66,5 +57,11 @@ class DetailsFragment : BaseFragment() {
     override fun onResume() {
         viewModel.getObject(associatedPositionId)
         super.onResume()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null
+        viewModel.disposeUseCase()
     }
 }
