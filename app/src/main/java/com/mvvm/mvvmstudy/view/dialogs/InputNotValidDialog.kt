@@ -9,9 +9,8 @@ import androidx.fragment.app.DialogFragment
 class InputNotValidDialog : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val builder = AlertDialog.Builder(activity)
-        builder.setMessage("Indicated data is not valid")
-            .setNegativeButton("Try again") { dialog: DialogInterface, _: Int -> dialog.dismiss() }
-        return builder.create()
+        AlertDialog.Builder(activity).also { it.setMessage("Indicated data is not valid")
+                .setNegativeButton("Try again") { dialog: DialogInterface, _: Int -> dialog.dismiss() }
+            return it.create() }
     }
 }

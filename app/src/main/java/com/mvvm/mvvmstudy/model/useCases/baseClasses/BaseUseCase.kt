@@ -1,4 +1,4 @@
-package com.mvvm.mvvmstudy.useCases.baseClasses
+package com.mvvm.mvvmstudy.model.useCases.baseClasses
 
 import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable

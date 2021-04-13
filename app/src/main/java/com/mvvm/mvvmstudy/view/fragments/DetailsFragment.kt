@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import androidx.lifecycle.Observer
 import com.mvvm.mvvmstudy.databinding.DetailsFragmentBinding
 import com.mvvm.mvvmstudy.model.domainModel.DataObject
@@ -18,35 +17,28 @@ class DetailsFragment : BaseFragment() {
     private var binding : DetailsFragmentBinding? = null
 
     companion object{
-        fun getInstance(value:Long) : DetailsFragment{
-            val fragment = DetailsFragment()
-            fragment.associatedPositionId = value
-            return fragment
-        }
+        fun getInstance(value:Long) = DetailsFragment().also { it.associatedPositionId = value }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        viewModel.currentObject.observe(viewLifecycleOwner, Observer<DataObject>{
-                data -> binding?.name?.text = data.name
-            binding?.details?.text = data.details
-        })
-
-        if(savedInstanceState != null){
-            associatedPositionId = savedInstanceState.getLong("ID")
-        }
-
-        viewModel.getObject(associatedPositionId)
         binding = DetailsFragmentBinding.inflate(inflater, container, false)
 
-        val closeButton : Button? = binding?.closeButton
-        closeButton?.setOnClickListener{
-            dismissFragment()
+        savedInstanceState?.let { associatedPositionId = savedInstanceState.getLong("ID")
+            viewModel.getObject(associatedPositionId)
         }
-        val editButton : Button? = binding?.editButton
-        editButton?.setOnClickListener{
-            showFragment(EditionFragment.getInstance(associatedPositionId))
-        }
-        return binding?.root
+
+        viewModel.currentObject.observe(viewLifecycleOwner, Observer<DataObject> { data ->
+            binding?.let {
+                it.name.text = data.name
+                it.details.text = data.details
+            }
+        })
+
+            return binding?.let { binding ->
+                binding.closeButton.also { button -> button.setOnClickListener{ showFragment(ListFragment()) } }
+                binding.editButton.also { button -> button.setOnClickListener{
+                    showFragment(EditionFragment.getInstance(associatedPositionId)) } }
+                return binding.root }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -62,6 +54,5 @@ class DetailsFragment : BaseFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         binding = null
-        viewModel.disposeUseCase()
     }
 }

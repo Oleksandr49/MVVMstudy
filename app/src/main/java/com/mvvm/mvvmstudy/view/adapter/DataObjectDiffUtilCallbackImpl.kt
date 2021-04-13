@@ -1,4 +1,4 @@
-package com.mvvm.mvvmstudy.model
+package com.mvvm.mvvmstudy.view.adapter
 
 import androidx.recyclerview.widget.DiffUtil
 import com.mvvm.mvvmstudy.model.domainModel.DataObject
