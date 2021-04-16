@@ -1,20 +1,15 @@
 package com.mvvm.mvvmstudy.application
 
 import android.app.Application
-import org.koin.android.ext.koin.androidContext
-import org.koin.android.ext.koin.androidLogger
-import org.koin.core.context.startKoin
-import org.koin.core.logger.Level
+import com.mvvm.mvvmstudy.application.dagger.AppComponent
+import com.mvvm.mvvmstudy.application.dagger.DaggerAppComponent
 
 class MyApplication : Application() {
 
+    val appComponent: AppComponent by lazy { DaggerAppComponent.factory().create(applicationContext) }
+    
     override fun onCreate() {
         super.onCreate()
-        startKoin {
-            androidLogger(Level.DEBUG)
-            androidContext(this@MyApplication)
-            modules(applicationModules)
-        }
-
     }
 }
+

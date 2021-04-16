@@ -2,23 +2,27 @@ package com.mvvm.mvvmstudy.view.fragments
 
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
+
 import com.mvvm.mvvmstudy.R
 
 open class BaseFragment : Fragment() {
 
     fun dismissFragment(){
-        parentFragmentManager.popBackStack()
+        parentFragment?.fragmentManager?.popBackStack()
     }
 
     fun showFragment(fragment: Fragment) {
-        parentFragmentManager.beginTransaction().also {
-            it.replace(R.id.fragmentPlaceHolder, fragment)
-            it.addToBackStack(null)
-            it.commit()
+        parentFragment?.fragmentManager?.let {
+            it.beginTransaction().also {transcation ->
+                transcation.replace(R.id.fragmentPlaceHolder, fragment)
+                transcation.addToBackStack(null)
+                transcation.commit()
+            }
         }
         }
 
     fun showDialog(dialog: DialogFragment) {
-        dialog.show(parentFragmentManager, "anyTag")
+        parentFragment?.fragmentManager?.let { dialog.show(it, "anyTag") }
+
     }
 }

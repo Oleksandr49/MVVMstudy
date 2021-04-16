@@ -4,8 +4,9 @@ import com.mvvm.mvvmstudy.model.domainModel.DataObject
 import com.mvvm.mvvmstudy.model.repository.DataObjectRepository
 import com.mvvm.mvvmstudy.model.useCases.baseClasses.IOUseCase
 import io.reactivex.SingleObserver
+import javax.inject.Inject
 
-class GetAllUseCase(private val repository: DataObjectRepository) : IOUseCase() {
+class GetAllUseCase @Inject constructor (private val repository: DataObjectRepository) : IOUseCase() {
 
     fun getAll(observer: SingleObserver<List<DataObject>>){
         repository.getAll()

@@ -6,8 +6,9 @@ import com.mvvm.mvvmstudy.model.domainModel.DataObject
 import com.mvvm.mvvmstudy.model.observers.OnSuccessSingleObserver
 import com.mvvm.mvvmstudy.model.useCases.crudUseCases.DetailsUseCase
 import com.mvvm.mvvmstudy.model.useCases.crudUseCases.UpdateUseCase
+import javax.inject.Inject
 
-class EditionFragmentViewModel (private val detailsUseCase : DetailsUseCase, private val updateUseCase : UpdateUseCase) : ViewModel() {
+class EditionFragmentViewModel @Inject constructor (private val detailsUseCase : DetailsUseCase, private val updateUseCase : UpdateUseCase) : ViewModel() {
 
     var currentObject : MutableLiveData<DataObject> = MutableLiveData()
 

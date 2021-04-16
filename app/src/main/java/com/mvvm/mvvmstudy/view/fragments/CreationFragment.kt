@@ -1,20 +1,33 @@
 package com.mvvm.mvvmstudy.view.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import com.mvvm.mvvmstudy.application.MyApplication
 import com.mvvm.mvvmstudy.databinding.CreationFragmentBinding
 import com.mvvm.mvvmstudy.view.dialogs.ConfirmationDialog
 import com.mvvm.mvvmstudy.view.dialogs.InputNotValidDialog
 import com.mvvm.mvvmstudy.viewmodel.CreationFragmentViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import com.mvvm.mvvmstudy.viewmodel.DetailsFragmentViewModel
+import javax.inject.Inject
 
 class CreationFragment : BaseFragment() {
 
-    private val viewModel : CreationFragmentViewModel by viewModel()
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private val viewModel = viewModelFactory.create(CreationFragmentViewModel::class.java)
     private var binding : CreationFragmentBinding? = null
 
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        (requireActivity().application as MyApplication).appComponent.creationComponent()
+                .create().inject(this)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 

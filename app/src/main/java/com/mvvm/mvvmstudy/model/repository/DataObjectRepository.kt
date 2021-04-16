@@ -3,8 +3,9 @@ package com.mvvm.mvvmstudy.model.repository
 import com.mvvm.mvvmstudy.model.domainModel.DataObject
 import io.reactivex.Completable
 import io.reactivex.Single
+import javax.inject.Inject
 
-class DataObjectRepository(private val dataObjectDAO: DataObjectDAO): BaseRepository <DataObject> {
+class DataObjectRepository @Inject constructor (private val dataObjectDAO: DataObjectDAO): BaseRepository <DataObject> {
 
     override fun getAll(): Single<List<DataObject>> = dataObjectDAO.getAll()
 

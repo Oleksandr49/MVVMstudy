@@ -6,8 +6,9 @@ import com.mvvm.mvvmstudy.model.domainModel.DataObject
 import com.mvvm.mvvmstudy.model.observers.OnSuccessSingleObserver
 import com.mvvm.mvvmstudy.model.useCases.crudUseCases.DeletionUseCase
 import com.mvvm.mvvmstudy.model.useCases.crudUseCases.GetAllUseCase
+import javax.inject.Inject
 
-class ListFragmentViewModel (private val getListUseCase: GetAllUseCase, private val deletionUseCase : DeletionUseCase) : ViewModel() {
+class ListFragmentViewModel @Inject constructor(private val getListUseCase: GetAllUseCase, private val deletionUseCase : DeletionUseCase) : ViewModel() {
 
     var currentObjectList : MutableLiveData<List<DataObject>> = MutableLiveData()
 
