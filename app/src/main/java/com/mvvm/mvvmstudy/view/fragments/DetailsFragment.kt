@@ -27,7 +27,7 @@ class DetailsFragment : BaseFragment() {
             viewModel.getObject(associatedPositionId)
         }
 
-        viewModel.currentObject.observe(viewLifecycleOwner, Observer<DataObject> { data ->
+        viewModel.currentObject.observe(viewLifecycleOwner, { data ->
             binding?.let {
                 it.name.text = data.name
                 it.details.text = data.details
@@ -53,6 +53,7 @@ class DetailsFragment : BaseFragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        viewModel.dispose()
         binding = null
     }
 }

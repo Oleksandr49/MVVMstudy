@@ -11,8 +11,8 @@ class ConfirmationDialog(private val onConfirmCallback : () -> Unit): DialogFrag
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         AlertDialog.Builder(activity).also {
             it.setMessage("Confirm please")
-                    .setPositiveButton("Confirm") { _: DialogInterface?, _: Int -> onConfirmCallback() }
-                    .setNegativeButton("Cancel") { dialog: DialogInterface, _: Int -> dialog.dismiss() }
+                .setPositiveButton("Confirm") { _: DialogInterface?, _: Int -> onConfirmCallback() }
+                .setNegativeButton("Cancel") { dialog: DialogInterface, _: Int -> dialog.dismiss() }
             return it.create()
         }
     }

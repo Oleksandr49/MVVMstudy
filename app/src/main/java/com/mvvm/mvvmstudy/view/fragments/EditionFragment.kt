@@ -24,7 +24,7 @@ class EditionFragment : BaseFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = EditionFragmentBinding.inflate(inflater, container, false)
-        viewModel.currentObject.observe(viewLifecycleOwner, Observer<DataObject>{
+        viewModel.currentObject.observe(viewLifecycleOwner, {
             data -> binding?.let { it.objectNameEdit.setText(data.name)
             it.objectDetailsEdit.setText(data.details)  }
         })
@@ -67,6 +67,7 @@ class EditionFragment : BaseFragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        viewModel.dispose()
         binding = null
     }
 }

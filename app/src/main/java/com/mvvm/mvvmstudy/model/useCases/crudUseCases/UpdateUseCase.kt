@@ -2,14 +2,17 @@ package com.mvvm.mvvmstudy.model.useCases.crudUseCases
 
 import com.mvvm.mvvmstudy.model.domainModel.DataObject
 import com.mvvm.mvvmstudy.model.repository.DataObjectRepository
-import com.mvvm.mvvmstudy.model.useCases.baseClasses.IOUseCase
+import com.mvvm.mvvmstudy.model.useCases.baseClasses.BaseUseCase
+import io.reactivex.CompletableObserver
 
-class UpdateUseCase (private val repository: DataObjectRepository) : IOUseCase() {
+class UpdateUseCase (private val repository: DataObjectRepository) : BaseUseCase<DataObject, CompletableObserver>() {
 
-    fun update (newDataObject: DataObject) {
-        super.addDisposable(repository.update(newDataObject)
-                .subscribeOn(super.threadExecutorScheduler)
-                .observeOn(super.postExecutionThreadScheduler)
-                .subscribe())
+    override fun execute(param: DataObject?, observer: CompletableObserver) {
+        param?.let {
+            repository.update(it)
+                .subscribeOn(threadExecutorScheduler)
+                .observeOn(postExecutionThreadScheduler)
+                .subscribe()
+        }
     }
 }

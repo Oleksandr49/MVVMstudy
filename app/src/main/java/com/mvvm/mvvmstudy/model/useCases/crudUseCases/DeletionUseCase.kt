@@ -1,14 +1,17 @@
 package com.mvvm.mvvmstudy.model.useCases.crudUseCases
 
 import com.mvvm.mvvmstudy.model.repository.DataObjectRepository
-import com.mvvm.mvvmstudy.model.useCases.baseClasses.IOUseCase
+import com.mvvm.mvvmstudy.model.useCases.baseClasses.BaseUseCase
+import io.reactivex.CompletableObserver
 
-class DeletionUseCase(private val repository: DataObjectRepository) : IOUseCase() {
+class DeletionUseCase(private val repository: DataObjectRepository) : BaseUseCase<Long, CompletableObserver>() {
 
-    fun delete(dataObjectID: Long) {
-        super.addDisposable(repository.deleteById(dataObjectID)
-                .subscribeOn(super.threadExecutorScheduler)
-                .observeOn(super.postExecutionThreadScheduler)
-                .subscribe())
+    override fun execute(param: Long?, observer: CompletableObserver) {
+         param?.let {
+            repository.deleteById(it)
+                .subscribeOn(threadExecutorScheduler)
+                .observeOn(postExecutionThreadScheduler)
+                .subscribe()
+        }
     }
 }

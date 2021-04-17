@@ -24,7 +24,7 @@ class ListFragment : BaseFragment(){
     private var binding : ListFragmentBinding? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        viewModel.currentObjectList.observe(viewLifecycleOwner, Observer<List<DataObject>>{ list -> adapter?.updateList(list)}  )
+        viewModel.currentObjectList.observe(viewLifecycleOwner, { list -> adapter?.updateList(list)}  )
         binding = ListFragmentBinding.inflate(inflater, container, false)
 
         viewModel.updateList()
@@ -60,6 +60,7 @@ class ListFragment : BaseFragment(){
 
     override fun onDestroyView() {
         super.onDestroyView()
+        viewModel.dispose()
         binding = null
     }
 }

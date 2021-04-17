@@ -55,6 +55,7 @@ class CreationFragment : BaseFragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        viewModel.dispose()
         binding = null
     }
 }

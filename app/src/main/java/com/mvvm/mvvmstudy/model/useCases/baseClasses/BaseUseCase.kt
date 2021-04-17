@@ -1,25 +1,17 @@
 package com.mvvm.mvvmstudy.model.useCases.baseClasses
 
 import io.reactivex.Scheduler
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 
 
-abstract class BaseUseCase(workThread: Scheduler, receivingThread: Scheduler) {
+abstract class BaseUseCase<P, O> {
 
-    protected val threadExecutorScheduler: Scheduler = workThread
+    protected open val threadExecutorScheduler: Scheduler = Schedulers.io()
 
-    protected val postExecutionThreadScheduler: Scheduler = receivingThread
+    protected open val postExecutionThreadScheduler: Scheduler = AndroidSchedulers.mainThread()
 
-    private val disposables = CompositeDisposable()
+    abstract fun execute(param:P? = null, observer:O)
 
-    open fun dispose() {
-        if (!disposables.isDisposed) {
-            disposables.dispose()
-        }
-    }
 
-    protected fun addDisposable(disposable: Disposable) {
-        disposables.add(disposable)
-    }
 }
