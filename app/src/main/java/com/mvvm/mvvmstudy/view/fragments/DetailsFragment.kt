@@ -5,12 +5,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.mvvm.mvvmstudy.application.MyApplication
 import com.mvvm.mvvmstudy.databinding.DetailsFragmentBinding
 import com.mvvm.mvvmstudy.model.domainModel.DataObject
-import com.mvvm.mvvmstudy.viewmodel.CreationFragmentViewModel
 import com.mvvm.mvvmstudy.viewmodel.DetailsFragmentViewModel
 import javax.inject.Inject
 
@@ -18,7 +18,7 @@ class DetailsFragment : BaseFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
-    private val viewModel = viewModelFactory.create(DetailsFragmentViewModel::class.java)
+    private val viewModel by viewModels<DetailsFragmentViewModel>{viewModelFactory}
     var associatedPositionId : Long = 0
     private var binding : DetailsFragmentBinding? = null
 

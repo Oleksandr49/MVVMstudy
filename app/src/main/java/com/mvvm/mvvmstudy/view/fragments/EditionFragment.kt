@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.mvvm.mvvmstudy.application.MyApplication
@@ -21,7 +22,7 @@ class EditionFragment : BaseFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
-    private val viewModel = viewModelFactory.create(EditionFragmentViewModel::class.java)
+    private val viewModel by viewModels<EditionFragmentViewModel>{viewModelFactory}
     var associatedObjectId : Long = 0
     private var binding : EditionFragmentBinding? = null
 

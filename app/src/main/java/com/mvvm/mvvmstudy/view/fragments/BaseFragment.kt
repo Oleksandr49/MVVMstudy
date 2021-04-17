@@ -8,21 +8,21 @@ import com.mvvm.mvvmstudy.R
 open class BaseFragment : Fragment() {
 
     fun dismissFragment(){
-        parentFragment?.fragmentManager?.popBackStack()
+        parentFragmentManager.popBackStack()
     }
 
     fun showFragment(fragment: Fragment) {
-        parentFragment?.fragmentManager?.let {
-            it.beginTransaction().also {transcation ->
-                transcation.replace(R.id.fragmentPlaceHolder, fragment)
-                transcation.addToBackStack(null)
-                transcation.commit()
+        parentFragmentManager.let {
+            it.beginTransaction().also {transaction ->
+                transaction.replace(R.id.fragmentPlaceHolder, fragment)
+                transaction.addToBackStack(null)
+                transaction.commit()
             }
         }
         }
 
     fun showDialog(dialog: DialogFragment) {
-        parentFragment?.fragmentManager?.let { dialog.show(it, "anyTag") }
+        parentFragmentManager.let { dialog.show(it, "anyTag") }
 
     }
 }
