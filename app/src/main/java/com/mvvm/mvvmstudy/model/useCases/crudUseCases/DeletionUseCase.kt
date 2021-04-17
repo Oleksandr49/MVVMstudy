@@ -11,7 +11,7 @@ class DeletionUseCase(private val repository: DataObjectRepository) : BaseUseCas
             repository.deleteById(it)
                 .subscribeOn(threadExecutorScheduler)
                 .observeOn(postExecutionThreadScheduler)
-                .subscribe()
+                .subscribe(observer)
         }
     }
 }

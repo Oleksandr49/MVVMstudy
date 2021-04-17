@@ -12,7 +12,7 @@ class UpdateUseCase (private val repository: DataObjectRepository) : BaseUseCase
             repository.update(it)
                 .subscribeOn(threadExecutorScheduler)
                 .observeOn(postExecutionThreadScheduler)
-                .subscribe()
+                .subscribe(observer)
         }
     }
 }

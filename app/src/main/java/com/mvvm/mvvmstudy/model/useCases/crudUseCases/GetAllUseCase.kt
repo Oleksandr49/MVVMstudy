@@ -11,6 +11,6 @@ class GetAllUseCase(private val repository: DataObjectRepository) : BaseUseCase<
          repository.getAll()
             .subscribeOn(threadExecutorScheduler)
             .observeOn(postExecutionThreadScheduler)
-            .subscribe()
+            .subscribe(observer)
     }
 }

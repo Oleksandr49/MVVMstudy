@@ -54,13 +54,17 @@ class ListFragment : BaseFragment(){
     }
 
     override fun onResume() {
-        viewModel.updateList()
         super.onResume()
+        viewModel.updateList()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        viewModel.dispose()
         binding = null
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.dispose()
     }
 }
