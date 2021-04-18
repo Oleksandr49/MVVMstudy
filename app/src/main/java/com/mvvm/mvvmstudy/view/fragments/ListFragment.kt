@@ -5,12 +5,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.Observer
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
+import com.mvvm.mvvmstudy.R
 import com.mvvm.mvvmstudy.databinding.ListFragmentBinding
-import com.mvvm.mvvmstudy.model.domainModel.DataObject
 import com.mvvm.mvvmstudy.view.adapter.ListFragmentAdapter
 import com.mvvm.mvvmstudy.view.adapter.ViewCallback
 import com.mvvm.mvvmstudy.view.dialogs.ConfirmationDialog
@@ -32,7 +33,9 @@ class ListFragment : BaseFragment(){
         return binding?.let { binding -> binding.recyclerView.also { recyclerView -> recyclerView.adapter = ListFragmentAdapter().also {
             it.viewCallback =  object : ViewCallback {
                 override fun removePosition(positionID: Long) { showDialog(ConfirmationDialog{viewModel.removePosition(positionID)}) }
-                override fun positionDetails(positionID: Long) { showFragment(DetailsFragment.getInstance(positionID)) }
+                override fun positionDetails(positionID: Long) {
+                    ListFragmentDirections.goToDetails(positionID).also {action -> findNavController().navigate(action) }
+                }
             }
             adapter = it
         }
@@ -47,7 +50,9 @@ class ListFragment : BaseFragment(){
                 }
             })
         }
-            binding.fab.also { floatingActionButton -> floatingActionButton.setOnClickListener { showFragment(CreationFragment()) } }
+            binding.fab.also { floatingActionButton -> floatingActionButton.setOnClickListener {
+                ListFragmentDirections.goToCreation().also { findNavController().navigate(it) }
+            } }
 
             return binding.root
         }

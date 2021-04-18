@@ -26,8 +26,6 @@ val applicationModules = module {
     factory { GetAllUseCase(get()) }
     factory { UpdateUseCase(get()) }
 
-
-
     single { DataObjectRepository(get()) }
 
     single {

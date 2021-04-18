@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/listFragment">
+
+    <fragment
+        android:id="@+id/listFragment"
+        android:name="com.mvvm.mvvmstudy.view.fragments.ListFragment"
+        android:label="ListFragment">
+        <action
+            android:id="@+id/go_to_Creation"
+            app:destination="@id/creationFragment" />
+        <action
+            android:id="@+id/go_to_Details"
+            app:destination="@id/detailsFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/creationFragment"
+        android:name="com.mvvm.mvvmstudy.view.fragments.CreationFragment"
+        android:label="CreationFragment">
+        <action
+            android:id="@+id/back_to_listFragment"
+            app:destination="@id/listFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/detailsFragment"
+        android:name="com.mvvm.mvvmstudy.view.fragments.DetailsFragment"
+        android:label="DetailsFragment">
+        <argument
+            android:name="DataObjectID"
+            android:defaultValue="0L"
+            app:argType="long" />
+        <action
+            android:id="@+id/back_to_listFragment"
+            app:destination="@id/listFragment" />
+        <action
+            android:id="@+id/go_to_Edition"
+            app:destination="@id/editionFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/editionFragment"
+        android:name="com.mvvm.mvvmstudy.view.fragments.EditionFragment"
+        android:label="EditionFragment1">
+        <action
+            android:id="@+id/back_to_detailsFragment"
+            app:destination="@id/detailsFragment" />
+        <argument
+            android:name="DataObjectID"
+            android:defaultValue="0L"
+            app:argType="long" />
+    </fragment>
+
+</navigation>

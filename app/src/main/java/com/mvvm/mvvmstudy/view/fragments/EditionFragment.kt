@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.mvvm.mvvmstudy.databinding.EditionFragmentBinding
 import com.mvvm.mvvmstudy.model.domainModel.DataObject
 import com.mvvm.mvvmstudy.view.dialogs.ConfirmationDialog
@@ -15,14 +17,12 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class EditionFragment : BaseFragment() {
 
     private val viewModel : EditionFragmentViewModel by viewModel()
+    private val args: DetailsFragmentArgs by navArgs()
     var associatedObjectId : Long = 0
     private var binding : EditionFragmentBinding? = null
 
-    companion object{
-        fun getInstance(value:Long) = EditionFragment().also { it.associatedObjectId = value }
-        }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        associatedObjectId = args.DataObjectID
         binding = EditionFragmentBinding.inflate(inflater, container, false)
         viewModel.currentObject.observe(viewLifecycleOwner, {
             data -> binding?.let { it.objectNameEdit.setText(data.name)
@@ -39,14 +39,16 @@ class EditionFragment : BaseFragment() {
         else viewModel.getObject(associatedObjectId)
 
         return binding?.let {binding ->
-            binding.Cancel.also { it.setOnClickListener{dismissFragment()} }
+            binding.Cancel.also { it.setOnClickListener{
+                EditionFragmentDirections.backToDetailsFragment(associatedObjectId).also {action -> findNavController().navigate(action)}
+            } }
 
             binding.Confirm.also { it.setOnClickListener{
                 val editedName = binding.objectNameEdit.text.toString()
                 val editedDetails = binding.objectDetailsEdit.text.toString()
 
                 if(viewModel.isValid(editedName, editedDetails)) showDialog(ConfirmationDialog {viewModel.confirmChanges(editedName, editedDetails)
-                        showFragment(DetailsFragment.getInstance(associatedObjectId))})
+                        EditionFragmentDirections.backToDetailsFragment(associatedObjectId).also {action -> findNavController().navigate(action)}})
 
                 else showDialog(InputNotValidDialog())
             }}

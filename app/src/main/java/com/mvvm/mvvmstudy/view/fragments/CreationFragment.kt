@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
 import com.mvvm.mvvmstudy.databinding.CreationFragmentBinding
 import com.mvvm.mvvmstudy.view.dialogs.ConfirmationDialog
 import com.mvvm.mvvmstudy.view.dialogs.InputNotValidDialog
@@ -17,7 +18,6 @@ class CreationFragment : BaseFragment() {
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-
         binding = CreationFragmentBinding.inflate(inflater, container, false)
 
         savedInstanceState?.getBundle("CurrentState")?.let {
@@ -32,8 +32,9 @@ class CreationFragment : BaseFragment() {
             val details = binding.objectDetailsInput.text.toString()
 
             if(viewModel.isValid(name, details)){
-                showDialog(ConfirmationDialog { viewModel.addPosition(name, details)
-                    dismissFragment()
+                showDialog(ConfirmationDialog {
+                    viewModel.addPosition(name, details)
+                    CreationFragmentDirections.backToListFragment().also { findNavController().navigate(it) }
                 })
             }
             else showDialog(InputNotValidDialog()) }

@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.mvvm.mvvmstudy.databinding.DetailsFragmentBinding
 import com.mvvm.mvvmstudy.model.domainModel.DataObject
 import com.mvvm.mvvmstudy.viewmodel.DetailsFragmentViewModel
@@ -13,14 +15,12 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class DetailsFragment : BaseFragment() {
 
     private val viewModel : DetailsFragmentViewModel by viewModel()
+    private val args: DetailsFragmentArgs by navArgs()
     var associatedPositionId : Long = 0
     private var binding : DetailsFragmentBinding? = null
 
-    companion object{
-        fun getInstance(value:Long) = DetailsFragment().also { it.associatedPositionId = value }
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        associatedPositionId = args.DataObjectID
         binding = DetailsFragmentBinding.inflate(inflater, container, false)
 
         savedInstanceState?.let { associatedPositionId = savedInstanceState.getLong("ID")
@@ -35,9 +35,10 @@ class DetailsFragment : BaseFragment() {
         })
 
             return binding?.let { binding ->
-                binding.closeButton.also { button -> button.setOnClickListener{ showFragment(ListFragment()) } }
+                binding.closeButton.also { button -> button.setOnClickListener{
+                    DetailsFragmentDirections.backToListFragment().also { findNavController().navigate(it) }} }
                 binding.editButton.also { button -> button.setOnClickListener{
-                    showFragment(EditionFragment.getInstance(associatedPositionId)) } }
+                    DetailsFragmentDirections.goToEdition(associatedPositionId).also { findNavController().navigate(it) } } }
                 return binding.root }
     }
 
