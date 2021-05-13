@@ -1,55 +1,42 @@
 package com.mvvm.mvvmstudy.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.mvvm.mvvmstudy.model.domainModel.DataObject
-import com.mvvm.mvvmstudy.model.observers.OnSuccessActionCallback
+import com.mvvm.mvvmstudy.model.observers.OnSuccessCompletableObserver
 import com.mvvm.mvvmstudy.model.observers.OnSuccessSingleObserver
-import com.mvvm.mvvmstudy.model.repository.DataObjectRepository
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import com.mvvm.mvvmstudy.model.useCases.crudUseCases.DetailsUseCase
+import com.mvvm.mvvmstudy.model.useCases.crudUseCases.UpdateUseCase
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 
-class EditionFragmentViewModel : ViewModel() {
+class EditionFragmentViewModel (private val detailsUseCase : DetailsUseCase, private val updateUseCase : UpdateUseCase) : ViewModel() {
 
-    private val repository : DataObjectRepository = DataObjectRepository()
     var currentObject : MutableLiveData<DataObject> = MutableLiveData()
+    private val compositeDisposable = CompositeDisposable()
 
     fun getObject(objectId : Long) {
-        repository.findById(objectId).subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(OnSuccessSingleObserver(object : OnSuccessActionCallback<DataObject> {
-                override fun onSuccessDo(`object`: DataObject) {
-                    currentObject.value = `object`
-                }
-            }))
+        detailsUseCase.execute(objectId,
+            OnSuccessSingleObserver({result -> currentObject.postValue(result)}, {disposable -> addToComposite(disposable)}))
     }
 
     fun confirmChanges(editedName: String, editedDetails: String){
-        val editedObject: DataObject? = currentObject.value
-        editedObject?.name = editedName
-        editedObject?.details = editedDetails
-        if (editedObject != null) {
-            repository.createOrUpdate(editedObject)
-                .subscribeOn(Schedulers.io())
-                .subscribe(OnSuccessSingleObserver(object : OnSuccessActionCallback<Long>{
-                    override fun onSuccessDo(`object`: Long) {
-                        Log.i("Updated", "Object updated, ID: " + `object`)
-                    }
-                }))
+        currentObject.value.also {dataObject ->
+        dataObject?.let { it.name = editedName
+            it.details = editedDetails
+                updateUseCase.execute(it, OnSuccessCompletableObserver({},{disposable -> addToComposite(disposable)}))
+        }
         }
     }
 
-    fun isValid(editedName: String, editedDetails: String) : Boolean{
-        return (notSame(editedName, editedDetails) && notEmpty(editedName, editedDetails))
+    fun dispose(){
+        compositeDisposable.dispose()
     }
 
-    private fun notSame(editedName: String, editedDetails: String) : Boolean{
-        val current : DataObject? = currentObject.value
-        return (editedName != current?.name && editedDetails != current?.details)
+    private fun addToComposite(disposable: Disposable){
+        compositeDisposable.add(disposable)
     }
 
-    private fun notEmpty(editedName: String, editedDetails: String) : Boolean{
-        return (editedName.isNotEmpty() && editedDetails.isNotEmpty())
-    }
+    fun isValid(editedName: String, editedDetails: String) = editedName.isNotEmpty() && editedDetails.isNotEmpty()
 }
+

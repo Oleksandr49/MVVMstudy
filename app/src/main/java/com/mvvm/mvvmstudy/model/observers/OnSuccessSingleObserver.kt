@@ -1,22 +1,21 @@
 package com.mvvm.mvvmstudy.model.observers
 
 import android.util.Log
-import com.mvvm.mvvmstudy.model.domainModel.DataObject
 import io.reactivex.SingleObserver
 import io.reactivex.disposables.Disposable
 
-class OnSuccessSingleObserver<T>(private val callbackAction: OnSuccessActionCallback<T>) : SingleObserver<T> {
+class OnSuccessSingleObserver<T>(val onSuccessAction : (result:T)->Unit?, val disposableAction: (disposable:Disposable)->Unit?) : SingleObserver<T> {
 
-
-    override fun onSubscribe(d: Disposable) {
-        Log.i("onSubscribe", "OnSuccessSingleEmptyObserver, onSubscribe()")
+    override fun onSuccess(t: T) {
+        onSuccessAction(t)
     }
 
     override fun onError(e: Throwable) {
-        e.message?.let { Log.i("Error", it) }
+        Log.i("Observer", e.message.toString())
     }
 
-    override fun onSuccess(t: T) {
-        callbackAction.onSuccessDo(t)
+    override fun onSubscribe(d: Disposable) {
+        disposableAction(d)
     }
+
 }

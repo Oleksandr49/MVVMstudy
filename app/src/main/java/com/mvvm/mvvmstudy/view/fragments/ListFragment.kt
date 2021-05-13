@@ -6,75 +6,65 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.mvvm.mvvmstudy.R
+import com.mvvm.mvvmstudy.databinding.ListFragmentBinding
 import com.mvvm.mvvmstudy.model.domainModel.DataObject
 import com.mvvm.mvvmstudy.view.adapter.ListFragmentAdapter
 import com.mvvm.mvvmstudy.view.adapter.ViewCallback
 import com.mvvm.mvvmstudy.view.dialogs.ConfirmationDialog
-import com.mvvm.mvvmstudy.view.dialogs.ConfirmationDialogCallback
 import com.mvvm.mvvmstudy.viewmodel.ListFragmentViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ListFragment : BaseFragment(){
 
-    lateinit var viewModel : ListFragmentViewModel
-    lateinit var adapter: ListFragmentAdapter
+    private val viewModel : ListFragmentViewModel by viewModel()
+    var adapter: ListFragmentAdapter? = null
+    private var binding : ListFragmentBinding? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        viewModel = ViewModelProvider(this).get(ListFragmentViewModel::class.java)
-        super.onCreate(savedInstanceState)
-    }
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        viewModel.currentObjectList.observe(viewLifecycleOwner, { list -> adapter?.updateList(list)}  )
+        binding = ListFragmentBinding.inflate(inflater, container, false)
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        viewModel.currentObjectList.observe(this, Observer<List<DataObject>>{ list -> adapter.updateList(list)}  )
-        return inflater.inflate(R.layout.list_fragment, container, false)
-    }
+        viewModel.updateList()
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        val recyclerView : RecyclerView = view.findViewById(R.id.recyclerView)
-        adapter = ListFragmentAdapter()
-        adapter.viewCallback = object : ViewCallback {
-            override fun removePosition(positionID: Long) {
-                showDialog(ConfirmationDialog(object : ConfirmationDialogCallback{
-                    override fun onConfirm() {
-                        viewModel.removePosition(positionID)
-                    }
-                }))
+        return binding?.let { binding -> binding.recyclerView.also { recyclerView -> recyclerView.adapter = ListFragmentAdapter().also {
+            it.viewCallback =  object : ViewCallback {
+                override fun removePosition(positionID: Long) { showDialog(ConfirmationDialog{viewModel.removePosition(positionID)}) }
+                override fun positionDetails(positionID: Long) { showFragment(DetailsFragment.getInstance(positionID)) }
             }
-
-            override fun positionDetails(positionID: Long) {
-                showFragment(DetailsFragment(positionID))
-            }
+            adapter = it
         }
-        recyclerView.adapter = adapter
-        recyclerView.layoutManager = LinearLayoutManager(activity)
-        recyclerView.addItemDecoration(object : ItemDecoration() {
-            override fun getItemOffsets(
-                outRect: Rect,
-                view: View,
-                parent: RecyclerView,
-                state: RecyclerView.State
-            )
-            {
-                super.getItemOffsets(outRect, view, parent, state)
-                outRect.left = 10
-                outRect.right = 10
-                outRect.bottom = 15
-                outRect.top = 15
-            }
-        })
+            recyclerView.layoutManager = LinearLayoutManager(activity)
+            recyclerView.addItemDecoration(object : ItemDecoration() {
+                override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
+                    super.getItemOffsets(outRect, view, parent, state)
+                    outRect.left = 10
+                    outRect.right = 10
+                    outRect.bottom = 15
+                    outRect.top = 15
+                }
+            })
+        }
+            binding.fab.also { floatingActionButton -> floatingActionButton.setOnClickListener { showFragment(CreationFragment()) } }
 
-        val addPosition: FloatingActionButton = view.findViewById(R.id.fab)
-        addPosition.setOnClickListener { showFragment(CreationFragment()) }
+            return binding.root
+        }
     }
 
     override fun onResume() {
-        viewModel.updateList()
         super.onResume()
+        viewModel.updateList()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.dispose()
     }
 }

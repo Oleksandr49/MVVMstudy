@@ -4,17 +4,16 @@ import android.util.Log
 import io.reactivex.CompletableObserver
 import io.reactivex.disposables.Disposable
 
-class OnCompleteObserver (private val onCompleteCallback : OnCompleteActionCallback) : CompletableObserver {
-
+class OnSuccessCompletableObserver(private val onCompleteAction : ()->Unit?, val disposableAction: (disposable:Disposable)->Unit?) : CompletableObserver{
     override fun onSubscribe(d: Disposable) {
-        Log.i("onSubscribe", "OnCompleteObserver, onSubscribe()")
+        disposableAction(d)
     }
 
     override fun onComplete() {
-        onCompleteCallback.onCompleteDo()
+        onCompleteAction()
     }
 
     override fun onError(e: Throwable) {
-        e.message?.let { Log.i("Error", it) }
+        Log.i("Observer", e.message.toString())
     }
 }

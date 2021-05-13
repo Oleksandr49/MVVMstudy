@@ -4,70 +4,70 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import com.mvvm.mvvmstudy.R
+import com.mvvm.mvvmstudy.databinding.EditionFragmentBinding
 import com.mvvm.mvvmstudy.model.domainModel.DataObject
 import com.mvvm.mvvmstudy.view.dialogs.ConfirmationDialog
-import com.mvvm.mvvmstudy.view.dialogs.ConfirmationDialogCallback
 import com.mvvm.mvvmstudy.view.dialogs.InputNotValidDialog
 import com.mvvm.mvvmstudy.viewmodel.EditionFragmentViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class EditionFragment(private val associatedObjectId : Long) : BaseFragment() {
+class EditionFragment : BaseFragment() {
 
-    lateinit var viewModel : EditionFragmentViewModel
-    lateinit var name : EditText
-    lateinit var details : EditText
+    private val viewModel : EditionFragmentViewModel by viewModel()
+    var associatedObjectId : Long = 0
+    private var binding : EditionFragmentBinding? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        viewModel = ViewModelProvider(this).get(EditionFragmentViewModel::class.java)
-        viewModel.currentObject.observe(this, Observer<DataObject>{
-                data -> name.setText(data.name)
-                        details.setText(data.details)
-        })
-        super.onCreate(savedInstanceState)
-    }
+    companion object{
+        fun getInstance(value:Long) = EditionFragment().also { it.associatedObjectId = value }
+        }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.edition_fragment, container, false)
-    }
+        binding = EditionFragmentBinding.inflate(inflater, container, false)
+        viewModel.currentObject.observe(viewLifecycleOwner, {
+            data -> binding?.let { it.objectNameEdit.setText(data.name)
+            it.objectDetailsEdit.setText(data.details)  }
+        })
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        name = view.findViewById(R.id.objectNameEdit)
-        details = view.findViewById(R.id.objectDetailsEdit)
-
-        val cancelButton : Button = view.findViewById(R.id.Cancel)
-        cancelButton.setOnClickListener{
-            dismissFragment()
-        }
-
-        val confirmationButton : Button = view.findViewById(R.id.Confirm)
-        confirmationButton.setOnClickListener{
-            val editedName:String = name.text.toString()
-            val editedDetails:String = details.text.toString()
-
-            if(viewModel.isValid(editedName, editedDetails)) {
-                showDialog(ConfirmationDialog(object : ConfirmationDialogCallback {
-                    override fun onConfirm() {
-                        viewModel.confirmChanges(editedName, editedDetails)
-                        dismissFragment()
-                    }
-                }))
-            }
-            else{
-                showDialog(InputNotValidDialog())
+        if(savedInstanceState != null){
+            savedInstanceState.getBundle("CurrentState")?.let {
+                associatedObjectId = it.getLong("ID")
+                DataObject(associatedObjectId, it.getCharSequence("Name").toString(), it.getCharSequence("Details").toString())
+                        .also { dataObject ->  viewModel.currentObject.postValue(dataObject) }
             }
         }
+        else viewModel.getObject(associatedObjectId)
 
-        super.onViewCreated(view, savedInstanceState)
+        return binding?.let {binding ->
+            binding.Cancel.also { it.setOnClickListener{dismissFragment()} }
+
+            binding.Confirm.also { it.setOnClickListener{
+                val editedName = binding.objectNameEdit.text.toString()
+                val editedDetails = binding.objectDetailsEdit.text.toString()
+
+                if(viewModel.isValid(editedName, editedDetails)) showDialog(ConfirmationDialog {viewModel.confirmChanges(editedName, editedDetails)
+                        showFragment(DetailsFragment.getInstance(associatedObjectId))})
+
+                else showDialog(InputNotValidDialog())
+            }}
+            return binding.root}
     }
 
-    override fun onResume() {
-        viewModel.getObject(associatedObjectId)
-        super.onResume()
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        Bundle().also {bundle ->
+            binding?.let {
+                bundle.putLong("ID", associatedObjectId)
+                bundle.putCharSequence("Name", it.objectNameEdit.text.toString())
+                bundle.putCharSequence("Details", it.objectDetailsEdit.text.toString())
+                outState.putBundle("CurrentState", bundle)
+            }
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        viewModel.dispose()
+        binding = null
     }
 }
